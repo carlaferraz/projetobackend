@@ -8,12 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor //cria construtor com os campos automatico p n chamar tds os setters manualmente
+@NoArgsConstructor //construtor vazio p receber os dados do json
 public class UserDTO {
 
     private Integer id;
-
+    //MARK: VALIDACAO DE DADOS
     @NotNull(message = "Name cannot be null.")
     @NotBlank(message = "Name cannot be blank.")
     private String name;

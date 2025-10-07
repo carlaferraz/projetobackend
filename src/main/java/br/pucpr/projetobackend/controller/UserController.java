@@ -13,24 +13,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/v1/users")
-@Tag(name = "Users", description = "Users API")
+@RestController //responde requisicoes p json
+@RequestMapping("/api/v1/users") //cria endereco das rotas
+@Tag(name = "Users", description = "Users API") //mark
 public class UserController {
 
     private List<UserDTO> users = new ArrayList<>();
-
+    // MARK: CREATE
     @PostMapping
     @Operation(summary = "Save a user", description = "Save a new user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successful Saving - POST!"),
             @ApiResponse(responseCode = "400", description = "The user data are wrong."),
     })
+    //requestbody: pega o json e transforma em obj userdto
     public ResponseEntity<UserDTO> save(@Valid @RequestBody UserDTO userDTO) {
         users.add(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
     }
-
+    // MARK: READ
     @GetMapping
     @Operation(summary = "Get ALL users", description = "Get ALL users")
     @ApiResponses(value = {
@@ -54,7 +55,7 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
-
+    // MARK: UPDATE
     @PutMapping("/{id}")
     @Operation(summary = "Update a user by ID", description = "Update a user by ID")
     @ApiResponses(value = {
@@ -71,7 +72,7 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
-
+// MARK: DELETE
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a user by ID", description = "Delete a user by ID")
     @ApiResponses(value = {
