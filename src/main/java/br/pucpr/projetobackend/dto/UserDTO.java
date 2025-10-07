@@ -6,14 +6,16 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import javax.management.relation.Role;
+
 
 @Data
-@AllArgsConstructor //cria construtor com os campos automatico p n chamar tds os setters manualmente
-@NoArgsConstructor //construtor vazio p receber os dados do json
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO {
 
     private Integer id;
-    //MARK: VALIDACAO DE DADOS
+
     @NotNull(message = "Name cannot be null.")
     @NotBlank(message = "Name cannot be blank.")
     private String name;
@@ -22,4 +24,6 @@ public class UserDTO {
     @NotBlank(message = "Email cannot be blank.")
     @Email(message = "Email must be valid.")
     private String email;
+
+    private Role role; // USER ou ADMIN
 }
