@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import javax.management.relation.Role;
 
 
 @Data
@@ -25,5 +24,4 @@ public class UserDTO {
     @Email(message = "Email must be valid.")
     private String email;
 
-    private Role role; // USER ou ADMIN
 }

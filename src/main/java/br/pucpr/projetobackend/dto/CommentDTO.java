@@ -15,6 +15,12 @@ public class CommentDTO {
 
     private Integer id;
 
+    @NotNull(message = "Movie ID cannot be null.")
+    private Integer movieId;
+
+    @NotNull(message = "User ID cannot be null.")
+    private Integer userId;
+
     @NotNull(message = "Title cannot be null.")
     @NotBlank(message = "Title cannot be blank.")
     private String title;
@@ -22,9 +28,4 @@ public class CommentDTO {
     @NotNull(message = "Comment cannot be null.")
     @NotBlank(message = "Comment cannot be blank.")
     private String comment;
-
-    @NotNull(message = "Rating cannot be null.")
-    @Min(value = 0, message = "Minimum rating is 0.")
-    @Max(value = 5, message = "Maximum rating is 5.")
-    private Integer rating;
 }
