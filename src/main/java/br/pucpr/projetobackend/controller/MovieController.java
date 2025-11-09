@@ -58,6 +58,9 @@ public class MovieController {
                 .map(m -> {
                     var dto = mapper.map(m, MovieDTO.class);
                     if (m.getAuthor() != null) dto.setAuthorId(m.getAuthor().getId());
+                    if (m.getActors() != null && !m.getActors().isEmpty()) {
+                        dto.setActorIds(m.getActors().stream().map(a -> a.getId()).toList());
+                    }
                     return dto;
                 })
                 .toList();
@@ -72,6 +75,9 @@ public class MovieController {
         var movie = movieService.getId(id);
         var dto = mapper.map(movie, MovieDTO.class);
         if (movie.getAuthor() != null) dto.setAuthorId(movie.getAuthor().getId());
+        if (movie.getActors() != null && !movie.getActors().isEmpty()) {
+            dto.setActorIds(movie.getActors().stream().map(a -> a.getId()).toList());
+        }
         return dto;
     }
 
@@ -91,6 +97,9 @@ public class MovieController {
         var updated = movieService.update(movie);
         var dto = mapper.map(updated, MovieDTO.class);
         if (updated.getAuthor() != null) dto.setAuthorId(updated.getAuthor().getId());
+        if (updated.getActors() != null && !updated.getActors().isEmpty()) {
+            dto.setActorIds(updated.getActors().stream().map(a -> a.getId()).toList());
+        }
         return dto;
     }
 
