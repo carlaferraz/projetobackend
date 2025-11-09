@@ -47,12 +47,10 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-                        .requestMatchers("/api/v1/authors/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/movies").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/authors", "/api/v1/authors/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/actors", "/api/v1/actors/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/movies", "/api/v1/movies/*").permitAll()
-                        .requestMatchers("/api/v1/biographies/**").permitAll()
-                        //.requestMatchers("/api/user/**").hasRole("ADMIN")
-                        .anyRequest().authenticated() //tudo o que não for liberado vai pedir autenticação
+                        .anyRequest().authenticated()
                 )
 
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

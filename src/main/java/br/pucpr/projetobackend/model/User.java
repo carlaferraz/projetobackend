@@ -3,8 +3,7 @@ package br.pucpr.projetobackend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.management.relation.Role;
-import java.util.List;
+import br.pucpr.projetobackend.security.Role;
 
 @Data
 @Entity
