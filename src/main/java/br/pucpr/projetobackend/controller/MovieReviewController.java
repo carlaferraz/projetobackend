@@ -1,8 +1,6 @@
 package br.pucpr.projetobackend.controller;
 
 import br.pucpr.projetobackend.dto.MovieReviewDTO;
-import br.pucpr.projetobackend.dto.UserDTO;
-import br.pucpr.projetobackend.exception.BusinessException;
 import br.pucpr.projetobackend.model.Movie;
 import br.pucpr.projetobackend.model.MovieReview;
 import br.pucpr.projetobackend.model.User;
@@ -93,10 +91,10 @@ public class MovieReviewController {
             @ApiResponse(responseCode = "201", description = "Successful Updating - PUT!"),
     })
     public ResponseEntity<MovieReviewDTO> update(@PathVariable Integer id,
-                                                 @RequestBody MovieReviewDTO dto) throws BusinessException {
+                                                 @RequestBody MovieReviewDTO dto) {
 
         if (id == null || dto.getId() == null)
-            throw new BusinessException("ID_REQUIRED","The ID is required");
+            throw new IllegalArgumentException("The ID is required");
 
         MovieReview review = mapper.map(dto, MovieReview.class);
         movieReviewService.update(review);

@@ -1,7 +1,6 @@
 package br.pucpr.projetobackend.controller;
 
 import br.pucpr.projetobackend.dto.UserDTO;
-import br.pucpr.projetobackend.exception.BusinessException;
 import br.pucpr.projetobackend.model.User;
 import br.pucpr.projetobackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,10 +78,9 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful Updating - PUT!"),
     })
-    public ResponseEntity<UserDTO> update(@PathVariable("id") Integer id, @RequestBody UserDTO usuarioDTO)
-            throws BusinessException {
+    public ResponseEntity<UserDTO> update(@PathVariable("id") Integer id, @RequestBody UserDTO usuarioDTO) {
         if (id == null || usuarioDTO.getId() == null) {
-            throw new BusinessException("ID_REQUIRED","The ID is required");
+            throw new IllegalArgumentException("The ID is required");
         }
 
         User user = new ModelMapper().map(usuarioDTO, User.class);
