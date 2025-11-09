@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Compila o projeto e gera o arquivo executável .jar
+./mvnw -Dmaven.test.skip=true package
+
+# Executa o jar em segundo plano e joga os logs para nohup.out
+nohup java -jar target/aulawebservice-0.0.1-SNAPSHOT.jar > nohup.out 2>&1 &
+
+# Após o projeto subir:
+# - Swagger UI: http://localhost:8080/swagger-ui/index.html
+# - Console H2: http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:testdb)
+# - Para reiniciar a parada ps aux | grep '[j]ava -jar' || true  depois da um kill <PID>

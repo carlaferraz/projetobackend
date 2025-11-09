@@ -9,14 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserBioDTO {
-
+public class AuthorDTO {
     private Integer id;
 
-    @NotNull(message = "AUTHOR_REQUIRED")
-    private Integer authorId;
+    @NotNull(message = "NAME_REQUIRED")
+    @NotBlank(message = "NAME_REQUIRED")
+    private String name;
 
-    @NotNull(message = "BIO_REQUIRED")
-    @NotBlank(message = "BIO_REQUIRED")
-    private String biography;
+    private String bio;
 }

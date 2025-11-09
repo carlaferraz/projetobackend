@@ -1,17 +1,17 @@
 package br.pucpr.projetobackend.controller;
 import br.pucpr.projetobackend.dto.MovieDTO;
+import br.pucpr.projetobackend.service.MovieService;
+import br.pucpr.projetobackend.service.AuthorService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,7 +19,14 @@ import java.util.List;
 @Tag(name = "Movies Now", description = "Movies API")
 public class MovieController {
 
-    private List<MovieDTO> movies = new ArrayList<>();
+    private final MovieService movieService;
+    private final AuthorService authorService;
+    private final org.modelmapper.ModelMapper mapper = new org.modelmapper.ModelMapper();
+
+    public MovieController(MovieService movieService, AuthorService authorService) {
+        this.movieService = movieService;
+        this.authorService = authorService;
+    }
 
 
     @PostMapping
@@ -29,7 +36,13 @@ public class MovieController {
             @ApiResponse(responseCode = "400", description = "The movie data are wrong."),
     })
     public ResponseEntity<MovieDTO> save(@Valid @RequestBody MovieDTO movieDTO) {
-        movies.add(movieDTO);
+        var movie = mapper.map(movieDTO, br.pucpr.projetobackend.model.Movie.class);
+        if (movieDTO.getAuthorId() != null) {
+            var author = authorService.getId(movieDTO.getAuthorId());
+            movie.setAuthor(author);
+        }
+        movieService.save(movie);
+        movieDTO.setId(movie.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(movieDTO);
     }
 
@@ -40,7 +53,14 @@ public class MovieController {
             @ApiResponse(responseCode = "200", description = "Successful GET all movies."),
     })
     public List<MovieDTO> findAll() {
-        return movies;
+        return movieService.getAll()
+                .stream()
+                .map(m -> {
+                    var dto = mapper.map(m, MovieDTO.class);
+                    if (m.getAuthor() != null) dto.setAuthorId(m.getAuthor().getId());
+                    return dto;
+                })
+                .toList();
     }
 
     @GetMapping("/{id}")
@@ -49,13 +69,10 @@ public class MovieController {
             @ApiResponse(responseCode = "200", description = "Successful GET movie."),
     })
     public MovieDTO findById(@PathVariable("id") Integer id) {
-        for (MovieDTO tempMovieDTO : movies) {
-            if (tempMovieDTO.getId().equals(id)) {
-                return tempMovieDTO;
-            }
-        }
-
-        return null;
+        var movie = movieService.getId(id);
+        var dto = mapper.map(movie, MovieDTO.class);
+        if (movie.getAuthor() != null) dto.setAuthorId(movie.getAuthor().getId());
+        return dto;
     }
 
 
@@ -65,16 +82,16 @@ public class MovieController {
             @ApiResponse(responseCode = "201", description = "Successful Updating - PUT!"),
     })
     public MovieDTO update(@PathVariable("id") Integer id, @RequestBody MovieDTO movieDTO) {
-        for (MovieDTO tempMovieDTO : movies) {
-            if (tempMovieDTO.getId().equals(id)) {
-                tempMovieDTO.setId(movieDTO.getId());
-                tempMovieDTO.setTitle(movieDTO.getTitle());
-                return tempMovieDTO;
-            }
+        var movie = mapper.map(movieDTO, br.pucpr.projetobackend.model.Movie.class);
+        movie.setId(id);
+        if (movieDTO.getAuthorId() != null) {
+            var author = authorService.getId(movieDTO.getAuthorId());
+            movie.setAuthor(author);
         }
-
-        return null;
-
+        var updated = movieService.update(movie);
+        var dto = mapper.map(updated, MovieDTO.class);
+        if (updated.getAuthor() != null) dto.setAuthorId(updated.getAuthor().getId());
+        return dto;
     }
 
 
@@ -84,6 +101,6 @@ public class MovieController {
             @ApiResponse(responseCode = "201", description = "Successful Deleting - DELETE!"),
     })
     public void delete(@PathVariable("id") Integer id) {
-        movies.removeIf(movieDTO -> id.equals(movieDTO.getId()));
+        movieService.delete(id);
     }
 }

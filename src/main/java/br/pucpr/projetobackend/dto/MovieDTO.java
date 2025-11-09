@@ -21,6 +21,9 @@ public class MovieDTO {
     @NotBlank(message = "Title cannot be blank.")
     private String title;
 
+    // optional: link to an existing author
+    private Integer authorId;
+
 }
 
 

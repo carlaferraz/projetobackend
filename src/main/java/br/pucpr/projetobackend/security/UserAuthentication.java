@@ -19,7 +19,11 @@ public class UserAuthentication implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        if (role == null) {
+            return List.of();
+        }
+        // Prefix with ROLE_ to match Spring Security's hasRole checks
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     public Integer getId() {
