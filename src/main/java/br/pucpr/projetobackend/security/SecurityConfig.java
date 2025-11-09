@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                         //.requestMatchers("/api/user/**").hasRole("ADMIN")
                         .anyRequest().authenticated() //tudo o que não for liberado vai pedir autenticação
                 )

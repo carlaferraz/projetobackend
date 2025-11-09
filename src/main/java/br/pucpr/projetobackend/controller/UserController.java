@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController //responde requisicoes p json
-@RequestMapping("/api/v1/users") //cria endereco das rotas
-@Tag(name = "Users", description = "Users API") //mark
+@RestController
+@RequestMapping("/api/v1/users")
+@Tag(name = "Users", description = "Users API")
 @AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    private List<UserDTO> users = new ArrayList<>();
+//    private List<UserDTO> users = new ArrayList<>();
 
 
 // MARK: CREATE
@@ -50,8 +50,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful GET all users."),
     })
-    public ResponseEntity<List<UserDTO>> findAll() {
-        List<User> users = userService.findAll();
+    public ResponseEntity<List<UserDTO>> getAll() {
+        List<User> users = userService.getAll();
         List<UserDTO> userVOs = users.stream().map(user -> new ModelMapper().map(user, UserDTO.class)).
                 toList();
         return new ResponseEntity<>(userVOs, HttpStatus.OK);
@@ -64,16 +64,12 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found."),
     })
     public ResponseEntity<UserDTO> findById(@PathVariable("id") Integer id) {
-        List<User> users = userService.findAll();
-        List<UserDTO> userVOs = users.stream().map(user -> new ModelMapper().map(user, UserDTO.class)).
-                toList();
+        User user = userService.getId(id);
 
-        for (UserDTO tempUserDTO : userVOs) {
-            if (tempUserDTO.getId().equals(id)) {
-                return ResponseEntity.ok(tempUserDTO);
-            }
-        }
-        return ResponseEntity.notFound().build();
+        UserDTO dto = new ModelMapper().map(user, UserDTO.class);
+
+        return ResponseEntity.ok(dto);
+//        return ResponseEntity.ok().body(userService.getId(id));
     }
 
 
@@ -90,7 +86,7 @@ public class UserController {
         }
 
         User user = new ModelMapper().map(usuarioDTO, User.class);
-        userService.save(user);
+        userService.update(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDTO);
     }
@@ -114,9 +110,10 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "Successful Deleting - DELETE!"),
     })
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
-        boolean removed = users.removeIf(userDTO -> id.equals(userDTO.getId()));
+//        boolean removed = users.removeIf(userDTO -> id.equals(userDTO.getId()));
         userService.delete(id);
+        return ResponseEntity.noContent().build();
 
-        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+//        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

@@ -3,6 +3,7 @@ package br.pucpr.projetobackend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import javax.management.relation.Role;
 import java.util.List;
 
 @Data
@@ -13,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
-    private Long id;
+    private Integer id;
 
     @Column(name = "NOME")
     private String nome;
@@ -26,5 +27,8 @@ public class User {
 
     @Column(name = "IDADE")
     private Integer idade;
+
+    @Column(name = "ROLE")
+    private Role role;
 
 }
