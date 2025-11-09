@@ -38,8 +38,9 @@ public class UserController {
     //requestbody: pega o json e transforma em obj userdto
     public ResponseEntity<UserDTO> save(@Valid @RequestBody UserDTO usuarioDTO) {
         User user = new ModelMapper().map(usuarioDTO, User.class);
-        userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDTO);
+        User savedUser = userService.save(user);
+        UserDTO responseDTO = new ModelMapper().map(savedUser, UserDTO.class);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
 
