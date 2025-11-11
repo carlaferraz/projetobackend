@@ -3,11 +3,15 @@ package br.pucpr.projetobackend.config;
 import br.pucpr.projetobackend.model.Actor;
 import br.pucpr.projetobackend.model.Author;
 import br.pucpr.projetobackend.model.Movie;
+import br.pucpr.projetobackend.model.User;
 import br.pucpr.projetobackend.repository.ActorRepository;
 import br.pucpr.projetobackend.repository.AuthorRepository;
 import br.pucpr.projetobackend.repository.MovieRepository;
+import br.pucpr.projetobackend.repository.UserRepository;
+import br.pucpr.projetobackend.security.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -21,12 +25,37 @@ public class DataLoader implements CommandLineRunner {
     private final AuthorRepository authorRepository;
     private final ActorRepository actorRepository;
     private final MovieRepository movieRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
+        loadUsers();
         loadAuthors();
         loadActors();
         loadMovies();
+    }
+
+    private void loadUsers() {
+        if (userRepository.count() == 0) {
+            User admin = new User();
+            admin.setNome("Admin User");
+            admin.setEmail("admin@example.com");
+            admin.setSenha(passwordEncoder.encode("admin123"));
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+
+            User regularUser = new User();
+            regularUser.setNome("Regular User");
+            regularUser.setEmail("user@example.com");
+            regularUser.setSenha(passwordEncoder.encode("user123"));
+            regularUser.setRole(Role.USER);
+            userRepository.save(regularUser);
+
+            System.out.println("✅ Usuários de teste criados:");
+            System.out.println("   📧 Email: admin@example.com | 🔑 Senha: admin123 | 👤 Role: ADMIN");
+            System.out.println("   📧 Email: user@example.com  | 🔑 Senha: user123  | 👤 Role: USER");
+        }
     }
 
     private void loadAuthors() {

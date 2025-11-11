@@ -24,9 +24,6 @@ public class User {
     @Column(name = "SENHA")
     private String senha;
 
-    @Column(name = "IDADE")
-    private Integer idade;
-
     @Column(name = "ROLE")
     private Role role;
 

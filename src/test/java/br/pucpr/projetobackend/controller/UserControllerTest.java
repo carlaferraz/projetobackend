@@ -1,5 +1,6 @@
 package br.pucpr.projetobackend.controller;
 
+import br.pucpr.projetobackend.dto.RegisterDTO;
 import br.pucpr.projetobackend.dto.UserDTO;
 import br.pucpr.projetobackend.model.User;
 import br.pucpr.projetobackend.service.UserService;
@@ -36,6 +37,7 @@ public class UserControllerTest {
     private UserService userService;
 
     private User user;
+    private RegisterDTO registerDTO;
     private UserDTO userDTO;
 
     @BeforeEach
@@ -44,7 +46,13 @@ public class UserControllerTest {
         user.setId(1);
         user.setNome("Jane Doe");
         user.setEmail("jane@example.com");
-        user.setIdade(30);
+        user.setSenha("$2a$10$encodedPassword");
+
+        registerDTO = new RegisterDTO();
+        registerDTO.setNome("Jane Doe");
+        registerDTO.setEmail("jane@example.com");
+        registerDTO.setSenha("senha123");
+        registerDTO.setConfirmarSenha("senha123");
 
         userDTO = new UserDTO();
         userDTO.setId(1);
@@ -53,17 +61,30 @@ public class UserControllerTest {
     }
 
     @Test
-    void testCreateUser_Success() throws Exception {
-        doNothing().when(userService).save(any(User.class));
+    void testRegisterUser_Success() throws Exception {
+        when(userService.register(any(RegisterDTO.class))).thenReturn(user);
 
         mockMvc.perform(post("/api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userDTO)))
+                .content(objectMapper.writeValueAsString(registerDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nome").value("Jane Doe"))
-                .andExpect(jsonPath("$.email").value("jane@example.com"));
+                .andExpect(content().string("Usuário cadastrado com sucesso!"));
 
-        verify(userService, times(1)).save(any(User.class));
+        verify(userService, times(1)).register(any(RegisterDTO.class));
+    }
+
+    @Test
+    void testRegisterUser_ValidationError() throws Exception {
+        RegisterDTO invalidRegister = new RegisterDTO();
+        invalidRegister.setNome("");
+        invalidRegister.setEmail("invalid-email");
+
+        mockMvc.perform(post("/api/v1/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidRegister)))
+                .andExpect(status().isBadRequest());
+
+        verify(userService, never()).register(any(RegisterDTO.class));
     }
 
     @Test

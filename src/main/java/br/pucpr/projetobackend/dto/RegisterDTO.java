@@ -10,15 +10,20 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
-
-    private Integer id;
+public class RegisterDTO {
 
     @NotNull(message = "NAME_REQUIRED")
     @NotBlank(message = "NAME_REQUIRED")
     private String nome;
 
-    @Email
+    @Email(message = "EMAIL_INVALID")
     @NotBlank(message = "EMAIL_REQUIRED")
     private String email;
+
+    @NotBlank(message = "PASSWORD_REQUIRED")
+    private String senha;
+
+    @NotBlank(message = "CONFIRM_PASSWORD_REQUIRED")
+    private String confirmarSenha;
 }
+

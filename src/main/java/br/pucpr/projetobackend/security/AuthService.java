@@ -1,8 +1,9 @@
 package br.pucpr.projetobackend.security;
 
 import br.pucpr.projetobackend.model.User;
+import br.pucpr.projetobackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -11,22 +12,23 @@ import java.util.Date;
 @AllArgsConstructor
 public class AuthService {
 
-    //private final UserRepository userRepository;
+    private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthResponse authenticate(AuthRequest request) {
-        var user = new User();
-        user.setEmail(request.getEmail());
-        user.setSenha(request.getPassword());
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Email ou senha inválidos"));
 
-        //TODO
-        //validar se a senha é correta
+        if (!passwordEncoder.matches(request.getSenha(), user.getSenha())) {
+            throw new RuntimeException("Email ou senha inválidos");
+        }
 
         UserAuthentication userAuthentication = new UserAuthentication();
-        userAuthentication.setEmail(request.getEmail());
+        userAuthentication.setEmail(user.getEmail());
+        userAuthentication.setRole(user.getRole());
 
-        String jwtToken = jwtService.generateToken(userAuthentication); //cria o token
+        String jwtToken = jwtService.generateToken(userAuthentication);
 
         AuthResponse authResponse = new AuthResponse();
         authResponse.setToken(jwtToken);
@@ -35,6 +37,4 @@ public class AuthService {
 
         return authResponse;
     }
-
-
 }

@@ -1,5 +1,6 @@
 package br.pucpr.projetobackend.controller;
 
+import br.pucpr.projetobackend.dto.RegisterDTO;
 import br.pucpr.projetobackend.dto.UserDTO;
 import br.pucpr.projetobackend.model.User;
 import br.pucpr.projetobackend.service.UserService;
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,26 +25,18 @@ public class UserController {
 
     private final UserService userService;
 
-//    private List<UserDTO> users = new ArrayList<>();
-
-
-// MARK: CREATE
     @PostMapping
-    @Operation(summary = "Save a user", description = "Save a new user")
+    @Operation(summary = "Register a new user", description = "Register a new user with password")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successful Saving - POST!"),
-            @ApiResponse(responseCode = "400", description = "The user data are wrong."),
+            @ApiResponse(responseCode = "201", description = "Successful Registration"),
+            @ApiResponse(responseCode = "400", description = "Invalid user data or passwords don't match"),
     })
-    //requestbody: pega o json e transforma em obj userdto
-    public ResponseEntity<UserDTO> save(@Valid @RequestBody UserDTO usuarioDTO) {
-        User user = new ModelMapper().map(usuarioDTO, User.class);
-        User savedUser = userService.save(user);
-        UserDTO responseDTO = new ModelMapper().map(savedUser, UserDTO.class);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterDTO registerDTO) {
+        userService.register(registerDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
     }
 
 
-// MARK: READ
     @GetMapping
     @Operation(summary = "Get ALL users", description = "Get ALL users")
     @ApiResponses(value = {
@@ -73,7 +65,6 @@ public class UserController {
     }
 
 
-    // MARK: UPDATE
     @PutMapping("/{id}")
     @Operation(summary = "Update a user by ID", description = "Update a user by ID")
     @ApiResponses(value = {
@@ -102,7 +93,6 @@ public class UserController {
 //    }
 
 
-// MARK: DELETE
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a user by ID", description = "Delete a user by ID")
     @ApiResponses(value = {
