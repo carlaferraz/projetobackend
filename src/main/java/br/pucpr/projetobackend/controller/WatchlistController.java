@@ -2,6 +2,7 @@ package br.pucpr.projetobackend.controller;
 
 import br.pucpr.projetobackend.model.Watchlist;
 import br.pucpr.projetobackend.service.WatchlistService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/watchlist")
+@RequestMapping("/api/v1/watchlist")
+@Tag(name = "Watch List")
 public class WatchlistController {
 
     @Autowired
@@ -41,7 +43,7 @@ public class WatchlistController {
         return ResponseEntity.ok(service.getByMovieId(movieId));
     }
 
-    @PatchMapping("/{id}/status")
+    @PutMapping("/{id}/status")
     public ResponseEntity<Watchlist> updateStatus(@PathVariable Integer id, @RequestBody Watchlist watchlist) {
         return ResponseEntity.ok(service.updateStatus(id, watchlist.getStatus()));
     }
